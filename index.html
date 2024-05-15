@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Flag Searching</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: purple;
+        }
+        .container{
+            background-color: #fff;
+            padding: 3em 2.5em;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            width: 80vw;
+            max-width: 37.5em;
+            border-radius: 0.62em;
+            box-shadow: 0 1.25em 1.8em rgba(8, 21, 65, 0.25);
+        }
+        .search_wrapper{
+            display: grid;
+            grid-template-columns: 9fr 3fr;
+            gap: 1.25em;
+        }
+        .search_wrapper button{
+            font-size: 1em;
+            background-color: blue;
+            color: #fff;
+            padding: 0.8em 0;
+            border: none;
+            border-radius: 1.5em;
+        }
+        .search_wrapper input{
+            font-size: 1em;
+            padding: 0 0.62em;
+            border: none;
+            border-bottom: 2px solid gray;
+            outline: none;
+        }
+        .imgCon{
+            display: block;
+            width: 35%;
+            min-width: 7.5em;
+            margin: 1.8em auto 1.2em auto;
+        }
+        .container h2{
+            font-weight: 600;
+            text-align: center;
+            text-transform: capitalize;
+        }
+        #result{
+            margin-top: 1.5em;
+        }
+        .data-wrapper h4{
+            display: inline-block;
+            font-weight: bold;
+        }
+        span{
+            color: red;
+            font-weight: bolder;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search_wrapper">
+            <input type="text" id="countryName" placeholder="Enter a country">
+            <button id="Search_btn">Search</button>
+        </div>
+        <div id="result">
+        </div>
+    </div>
+    <script>
+        let Search_btn = document.getElementById('Search_btn');
+        let countryName = document.getElementById('countryName');
+        let result = document.getElementById('result');
+
+        Search_btn.addEventListener('click', () => {
+            let Val = countryName.value;
+            let Url = `https://restcountries.com/v3.1/name/${Val}?fullText=true`;
+            fetch(Url)
+                .then((response) => response.json())
+                .then((data) => {
+                    let country = data[0];
+                    // console.log(country);
+                    // console.log(country.flags.svg);
+                    // console.log(country.capital);
+                    // console.log(country.continents[0]);
+                    // console.log(Object.values(country.currencies)[0].name);
+                    // console.log(country.population.toLocaleString());
+
+                    result.innerHTML = `
+                        <img src="${country.flags.svg}" class='imgCon' alt="Flag of ${country.name.common}">
+                        <h2>${country.name.common}</h2>
+                        <div class='wrapper'>
+                            <div class='data-wrapper'>
+                                <h4>Capital:</h4><span>${country.capital ? country.capital[0] : 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class='wrapper'>
+                            <div class='data-wrapper'>
+                                <h4>Continent:</h4><span>${country.continents[0]}</span>
+                            </div>
+                        </div>
+                        <div class='wrapper'>
+                            <div class='data-wrapper'>
+                                <h4>Currency:</h4><span>${Object.values(country.currencies)[0].name}</span>
+                            </div>
+                        </div>
+                        <div class='wrapper'>
+                            <div class='data-wrapper'>
+                                <h4>Symbol:</h4><span>${Object.values(country.currencies)[0].symbol}</span>
+                            </div>
+                        </div>
+                        <div class='wrapper'>
+                            <div class='data-wrapper'>
+                                <h4>Population:</h4><span>${country.population.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class='wrapper'>
+                            <div class='data-wrapper'>
+                                <h4>Languages:</h4><span>${Object.values(country.languages).join(', ')}</span>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch((error) => {
+                    result.innerHTML = `<p style="color: red;">Country not found. Please try again.</p>`;
+                });
+            countryName.value = '';
+        });
+    </script>
+</body>
+</html>
